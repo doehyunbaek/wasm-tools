@@ -180,7 +180,7 @@ fn make_predicate<'a>(
     predicate_script: &'a Path,
 ) -> impl FnMut(&[u8]) -> Result<OutputIsInteresting> + 'a {
     move |wasm| {
-        let tmp = NamedTempFile::new().context("Failed to create a temporary file.")?;
+        let tmp = NamedTempFile::with_suffix(".wasm").context("Failed to create a temporary file.")?;
         std::fs::write(tmp.path(), wasm).with_context(|| {
             format!(
                 "Failed to write to temporary file: {}",
