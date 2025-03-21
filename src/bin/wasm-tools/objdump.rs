@@ -28,6 +28,7 @@ impl Opts {
         };
         printer.indices.push(IndexSpace::default());
 
+        let mut function_index = 0;
         for payload in Parser::new(0).parse_all(&input) {
             match payload? {
                 Version { .. } => {}
@@ -47,8 +48,14 @@ impl Opts {
                 CodeSectionStart { range, count, .. } => {
                     printer.section_raw(range, count, "code")?
                 }
-                CodeSectionEntry(_) => {}
-
+                CodeSectionEntry(body) => {
+                    println!(
+                        "       Function index: {}, size: {} bytes",
+                        function_index,
+                        body.get_binary_reader().bytes_remaining()
+                    );
+                    function_index += 1;
+                }
                 ModuleSection {
                     unchecked_range: range,
                     ..
